@@ -1,5 +1,7 @@
 package com.driver;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,69 +10,75 @@ import java.util.List;
 @Service
 public class MovieService {
 
-    MovieRepository movieRepository=new MovieRepository();
-    public String addMovie(Movie movie){
-        String ans=movieRepository.addMovie(movie);
-        return ans;
-    }
-
-    public String addDirector(Director director){
-        String ans=movieRepository.addDirector(director);
-        return ans;
-    }
+    @Autowired
+    MovieRepository movieRepository;
 
 
-    public String addMovieDirectorPair(String nameMovie,String nameDirector){
-        String ans=movieRepository.addMovieDirectorPair(nameMovie,nameDirector);
-        return ans;
+    public String addMovie(Movie movie) {
+
+        return movieRepository.addMovie(movie);
     }
-    public Movie getMovieByName(String name){
-        List<Movie> movies=movieRepository.getAllMovie();
-        Movie ans=null;
-        for(Movie movie:movies){
-            if(movie.getName().equals(name)){
-                ans=movie;
+
+    public String addDirector(Director director) {
+
+        return movieRepository.addDirector(director);
+    }
+
+    public String addMovieDirectorPair(String movieName, String directorName) {
+
+        return movieRepository.addMovieDirectorPair(movieName, directorName);
+    }
+
+    public Movie getMovieByName(String movieName) {
+
+        List<Movie> movieList = movieRepository.getAllMovies();
+
+        for (Movie movie : movieList) {
+
+            if (movie.getName().equals(movieName)) {
+                return movie;
             }
         }
-        return ans;
+
+        return null;
     }
 
-    public Director getDirectorByName(String name){
-        List<Director> directors=movieRepository.getAllDirector();
-        Director ans=null;
-        for(Director director:directors){
-            if(director.getName().equals(name)){
-                ans=director;
-            }
-        }
-        return ans;
+    public Director getDirectorByName(String directorName) {
+
+        return movieRepository.getDirectorByName(directorName);
     }
 
-    public List<String> getMoviesByDirectorName(String name){
-        List<String>director=movieRepository.getMoviesByDirectorName();
-        List<String>ans=new ArrayList<>();
-        String d="";
-        for(String s:director){
-            if(s.equals(name)){
-                d=s;
-                break;
-            }
-        }
-        List<String>movie=movieRepository.getMoviesByDirectorName2();
-        for(String m:movie){
-            if(m.equals(d)){
-                ans.add(m);
-            }
-        }
-        return ans;
+    public List<String> getMoviesByDirectorName(String directorName) {
+
+        return movieRepository.getMoviesByDirectorName(directorName);
     }
 
-    public List<String> findAllMovies(){
-        List<Movie> temp=movieRepository.getAllMovie();
-        List<String>ans=new ArrayList<>();
-        for(Movie movie:temp){
-            ans.add(movie.getName());
+    public List<String> findAllMovies() {
+
+        List<String> movies = new ArrayList<>();
+
+        List<Movie> movieList = movieRepository.getAllMovies();
+
+        for (Movie movie : movieList) {
+
+            movies.add(movie.getName());
         }
-        return ans;
+
+        return movies;
+    }
+
+    public String deleteDirectorByName(String directorName) {
+
+        return movieRepository.deleteDirectorByName(directorName);
+    }
+
+    public String deleteAllDirectors() {
+
+        for (String directorName : movieRepository.directorHashMap.keySet()) {
+
+            movieRepository.deleteDirectorByName(directorName);
+        }
+
+        return "all directors' records deleted successfully";
     }
 }
